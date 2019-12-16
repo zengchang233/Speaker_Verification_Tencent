@@ -1,0 +1,35 @@
+data:
+  sample_rate: 16000
+  vad: false
+  feature: 'fbank'
+  feature_len: 128
+  win_len: 0.02
+  win_step: 0.01
+  n_frames: 128
+  data_path: '/home/zeng/zeng/datasets/voxceleb1'
+  manifest: './manifest/voxceleb1_manifest.csv'
+  trial_file: '/home/zeng/zeng/datasets/voxceleb1/veri_test.txt'
+  test_wav: '/home/zeng/zeng/datasets/voxceleb1/test/wav'
+
+model:
+  embedding_dim: 512
+  margin: 0.2
+  blocks: 4
+  expansion: 32
+  latent_dim: 32
+
+train:
+  epochs: 500
+  spks_per_batch: 20
+  utts_per_spk: 20
+  optimizer: 'sgd'
+  momentum: 0.9
+  lr: 0.001
+  lr_decay: 0.1
+  weight_decay: 0.00001
+  model_dir: './model/sgd/'
+  final_dir: './final_model/sgd/'
+  resume: false
+  load_optimizer: true
+  seed: 123456
+  prediction: 'pred.csv'

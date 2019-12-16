@@ -8,23 +8,21 @@ import torch.optim.lr_scheduler as lr_scheduler
 from CenterLoss import CenterLoss
 import matplotlib.pyplot as plt
 from deep_conv_sv import SpeakerVerification
-from DeepSpeakerDataset import DeepSpkDataset
-from enrollment_test import evaluate
+from dataset import SpeakerTrainDataset 
 import numpy as np
 import sys
 import os
 import subprocess
 import logger
+from sklearn.metrics import roc_curve
+from scipy.interpolate import interp1d
+from scipy.optimize import brentq
 
-def evalua(model, eval_feature_dir):
-    model.eval()
-    model.cpu()
-    with torch.no_grad():
-        annotation = EVAL_DEFINITION_DIR + '/' + 'annotation.csv'
-        evaluation = EVAL_DEFINITION_DIR + '/' + 'test.csv'
-        enroll = EVAL_DEFINITION_DIR + '/' + 'enrollment.csv'
-        accuracy, threshold = evaluate(model, eval_feature_dir, enroll, evaluation, annotation)
-    return accuracy, threshold
+def eer(y_true, y_pred):
+    fpr, tpr, thres = roc_curve(y_true, y_pred)
+    eer = brentq(lambda x: 1.0 - x - interp1d(fpr, tpr)(x), 0, 1)
+    thres = interp1d(fpr, thres)(eer)
+    return eer, thres
 
 def train(epoch, log_interval):
     model.train()
